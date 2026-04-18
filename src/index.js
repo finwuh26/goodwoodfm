@@ -21,13 +21,20 @@ async function main() {
   client.logger = logger;
   client.commands = loadCommands(path.join(__dirname, 'commands'));
   client.cooldowns = new CooldownManager(config.commandCooldownSeconds);
+  const nowPlayingService = new NowPlayingService({
+    apiUrl: config.azuraCastApiUrl,
+    pollIntervalMs: config.apiPollIntervalMs,
+    logger,
+  });
   client.services = {
-    nowPlaying: new NowPlayingService({
-      apiUrl: config.azuraCastApiUrl,
-      pollIntervalMs: config.apiPollIntervalMs,
-      logger,
-    }),
+    nowPlaying: nowPlayingService,
+    nowPlayingService,
+    azuraCast: nowPlayingService,
+    azuracast: nowPlayingService,
   };
+  client.nowPlayingService = nowPlayingService;
+  client.azuraCastService = nowPlayingService;
+  client.azuracastService = nowPlayingService;
   client.radioPlayer = new RadioPlayer({
     client,
     config,
