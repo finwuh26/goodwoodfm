@@ -31,6 +31,7 @@ class RadioPlayer {
   }
 
   bindPlayerEvents() {
+    // Idle/error events are treated as stream-health signals and trigger controlled restarts.
     this.player.on(AudioPlayerStatus.Idle, () => {
       if (this.isStopped) {
         return;
@@ -86,6 +87,7 @@ class RadioPlayer {
       this.connection = null;
     }
 
+    // Keep one authoritative voice connection instance and always subscribe the persistent player.
     this.connection = joinVoiceChannel({
       channelId: channel.id,
       guildId: channel.guild.id,
@@ -150,6 +152,7 @@ class RadioPlayer {
       this.scheduleRestart();
     });
 
+    // Resource options keep decoding controlled and allow runtime gain adjustments.
     const resource = createAudioResource(stream, {
       inputType: StreamType.Arbitrary,
       inlineVolume: true,

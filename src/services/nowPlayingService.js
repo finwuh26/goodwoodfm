@@ -1,4 +1,5 @@
 function parseNowPlaying(payload) {
+  // AzuraCast can return an object or an array depending on endpoint configuration.
   const source = Array.isArray(payload) ? payload[0] : payload;
   const song = source?.now_playing?.song || source?.song || {};
 
@@ -59,6 +60,7 @@ class NowPlayingService {
     const data = await response.json();
     const nextSong = parseNowPlaying(data);
 
+    // Presence updates are only sent when the track changes to avoid unnecessary API churn.
     const changed =
       !this.currentSong ||
       this.currentSong.title !== nextSong.title ||
