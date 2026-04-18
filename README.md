@@ -2,6 +2,8 @@
 
 Production-ready Discord radio bot for continuous AzuraCast MP3 streaming.
 
+Playback autostarts when the bot comes online. Manual start/stop/reconnect slash commands are intentionally removed.
+
 ## Setup
 
 1. Install dependencies:
@@ -16,6 +18,14 @@ Production-ready Discord radio bot for continuous AzuraCast MP3 streaming.
    ```bash
    npm start
    ```
+
+## Slash commands
+
+- `/nowplaying` — show the currently playing track
+
+## Web player
+
+- Open `player.html?stream=<YOUR_MP3_STREAM_URL>` to load a minimal autoplay MP3 player page (the `stream` parameter is required).
 
 ## Environment variables
 

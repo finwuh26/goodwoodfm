@@ -7,8 +7,13 @@ module.exports = {
     client.logger.info('Discord client ready', { user: client.user.tag });
 
     const commandDefinitions = Array.from(client.commands.values()).map((command) => command.data.toJSON());
+    await client.application.commands.set([]);
+    client.logger.info('Global slash commands cleared');
     await client.application.commands.set(commandDefinitions, client.config.guildId);
-    client.logger.info('Slash commands registered', { count: commandDefinitions.length });
+    client.logger.info('Guild slash commands registered', {
+      guildId: client.config.guildId,
+      count: commandDefinitions.length,
+    });
 
     client.services.nowPlaying.start((song) => {
       const activityName = `${song.artist} - ${song.title}`;
