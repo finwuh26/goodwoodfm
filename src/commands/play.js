@@ -7,9 +7,17 @@ module.exports = {
   cooldown: 10,
   async execute(interaction, client) {
     await interaction.deferReply({ ephemeral: true });
-    await client.radioPlayer.reconnect();
-    await interaction.editReply({
-      embeds: [createBaseEmbed('Radio playback started', COLORS.success)],
-    });
+
+    try {
+      await client.radioPlayer.reconnect();
+      await interaction.editReply({
+        embeds: [createBaseEmbed('Radio playback started', COLORS.success)],
+      });
+    } catch (error) {
+      client.logger.error('Play command failed to reconnect', { error: error.message });
+      await interaction.editReply({
+        embeds: [createBaseEmbed('Failed to start radio playback', COLORS.error)],
+      });
+    }
   },
 };
