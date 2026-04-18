@@ -11,7 +11,7 @@ function createPlayer(overrides = {}) {
       guildId: 'guild',
       voiceChannelId: 'voice',
       radioStreamUrl: 'https://example.com/stream',
-      streamReconnectDelayMs: 5,
+      streamReconnectDelayMs: 50,
       streamVolume: 0.5,
       ...overrides,
     },
