@@ -32,6 +32,8 @@ class RadioPlayer {
     this.connection = null;
     this.restartTimer = null;
     this.streamAbortController = null;
+    this.startPromise = null;
+    this.startPlaybackPromise = null;
     this.isStopped = true;
 
     this.bindPlayerEvents();
@@ -55,9 +57,21 @@ class RadioPlayer {
   }
 
   async start() {
+    if (this.startPromise) {
+      return this.startPromise;
+    }
+
     this.isStopped = false;
-    await this.connect();
-    await this.startPlayback();
+    this.clearRestart();
+
+    this.startPromise = (async () => {
+      await this.connect();
+      await this.startPlayback();
+    })().finally(() => {
+      this.startPromise = null;
+    });
+
+    return this.startPromise;
   }
 
   async stop() {
@@ -146,32 +160,42 @@ class RadioPlayer {
       return;
     }
 
-    this.abortStream();
-
-    const response = await this.fetchStream();
-    if (!response.body) {
-      throw new Error('Radio stream response has no body');
+    if (this.startPlaybackPromise) {
+      return this.startPlaybackPromise;
     }
 
-    const stream = Readable.fromWeb(response.body);
-    stream.on('error', (error) => {
-      this.logger.error('Radio stream error', { error: error.message });
-      this.scheduleRestart();
+    this.startPlaybackPromise = (async () => {
+      this.abortStream();
+
+      const response = await this.fetchStream();
+      if (!response.body) {
+        throw new Error('Radio stream response has no body');
+      }
+
+      const stream = Readable.fromWeb(response.body);
+      stream.on('error', (error) => {
+        this.logger.error('Radio stream error', { error: error.message });
+        this.scheduleRestart();
+      });
+
+      // Resource options keep decoding controlled and allow runtime gain adjustments.
+      const resource = createAudioResource(stream, {
+        inputType: StreamType.Arbitrary,
+        inlineVolume: true,
+        silencePaddingFrames: 5,
+      });
+
+      if (resource.volume) {
+        resource.volume.setVolume(this.config.streamVolume);
+      }
+
+      this.player.play(resource);
+      this.logger.info('Radio stream playback started');
+    })().finally(() => {
+      this.startPlaybackPromise = null;
     });
 
-    // Resource options keep decoding controlled and allow runtime gain adjustments.
-    const resource = createAudioResource(stream, {
-      inputType: StreamType.Arbitrary,
-      inlineVolume: true,
-      silencePaddingFrames: 5,
-    });
-
-    if (resource.volume) {
-      resource.volume.setVolume(this.config.streamVolume);
-    }
-
-    this.player.play(resource);
-    this.logger.info('Radio stream playback started');
+    return this.startPlaybackPromise;
   }
 
   async fetchStream() {
@@ -202,8 +226,7 @@ class RadioPlayer {
         return;
       }
 
-      this.connect()
-        .then(() => this.startPlayback())
+      this.start()
         .catch((error) => {
           this.logger.error('Radio restart failed', { error: error.message });
           this.scheduleRestart();
