@@ -17,6 +17,10 @@ const {
 } = require('@discordjs/voice');
 const userAgent = require('../utils/userAgent');
 
+function isAbortError(error) {
+  return error?.name === 'AbortError' || error?.message === 'The operation was aborted';
+}
+
 class RadioPlayer {
   constructor({ client, config, logger }) {
     this.client = client;
@@ -174,6 +178,9 @@ class RadioPlayer {
 
       const stream = Readable.fromWeb(response.body);
       stream.on('error', (error) => {
+        if (isAbortError(error)) {
+          return;
+        }
         this.logger.error('Radio stream error', { error: error.message });
         this.scheduleRestart();
       });
@@ -226,9 +233,18 @@ class RadioPlayer {
         return;
       }
 
-      this.start()
+      const recovery =
+        this.startPromise
+          ? this.start()
+          : this.reconnect();
+
+      recovery
         .catch((error) => {
-          this.logger.error('Radio restart failed', { error: error.message });
+          if (isAbortError(error)) {
+            this.logger.warn('Radio restart aborted', { error: error.message });
+          } else {
+            this.logger.error('Radio restart failed', { error: error.message });
+          }
           this.scheduleRestart();
         });
     }, this.config.streamReconnectDelayMs);

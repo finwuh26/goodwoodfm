@@ -48,7 +48,7 @@ class NowPlayingService {
     return this.currentSong;
   }
 
-  async poll() {
+  async fetchNowPlaying() {
     const response = await fetch(this.apiUrl, {
       headers: {
         'User-Agent': userAgent,
@@ -59,7 +59,11 @@ class NowPlayingService {
       throw new Error(`Now playing API request failed with status ${response.status}`);
     }
 
-    const data = await response.json();
+    return response.json();
+  }
+
+  async poll() {
+    const data = await this.fetchNowPlaying();
     const nextSong = parseNowPlaying(data);
 
     // Presence updates are only sent when the track changes to avoid unnecessary API churn.
