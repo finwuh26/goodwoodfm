@@ -35,10 +35,24 @@
     <div class="hint" id="hint" hidden>Autoplay was blocked by your browser. Press play to start audio.</div>
     <script>
       const params = new URLSearchParams(window.location.search);
-      const stream = params.get('stream') || 'https://example.com/stream.mp3';
+      const defaultStream = 'https://example.com/stream.mp3';
       const source = document.getElementById('streamSource');
       const player = document.getElementById('player');
       const hint = document.getElementById('hint');
+
+      const streamParam = params.get('stream');
+      let stream = defaultStream;
+
+      if (streamParam) {
+        try {
+          const parsed = new URL(streamParam, window.location.origin);
+          if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+            stream = parsed.href;
+          }
+        } catch {
+          stream = defaultStream;
+        }
+      }
 
       source.src = stream;
       player.load();
