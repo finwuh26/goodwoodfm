@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>goodwoodfm</title>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: #000;
+      }
+      audio {
+        width: min(460px, 92vw);
+      }
+      .hint {
+        position: fixed;
+        bottom: 16px;
+        left: 50%;
+        transform: translateX(-50%);
+        font: 14px system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        color: #d4d4d4;
+      }
+    </style>
+  </head>
+  <body>
+    <audio id="player" controls autoplay>
+      <source id="streamSource" src="" type="audio/mpeg" />
+    </audio>
+    <div class="hint" id="hint" hidden>Autoplay was blocked by your browser. Press play to start audio.</div>
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const stream = params.get('stream') || 'https://example.com/stream.mp3';
+      const source = document.getElementById('streamSource');
+      const player = document.getElementById('player');
+      const hint = document.getElementById('hint');
+
+      source.src = stream;
+      player.load();
+
+      player
+        .play()
+        .then(() => {
+          hint.hidden = true;
+        })
+        .catch(() => {
+          hint.hidden = false;
+        });
+    </script>
+  </body>
+</html>
