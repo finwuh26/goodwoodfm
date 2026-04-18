@@ -62,9 +62,9 @@ class RadioPlayer {
     }
 
     this.isStopped = false;
-    this.clearRestart();
 
     this.startPromise = (async () => {
+      this.clearRestart();
       await this.connect();
       await this.startPlayback();
     })().finally(() => {
