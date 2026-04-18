@@ -1,3 +1,5 @@
+const userAgent = require('../utils/userAgent');
+
 function parseNowPlaying(payload) {
   // AzuraCast can return an object or an array depending on endpoint configuration.
   const source = Array.isArray(payload) ? payload[0] : payload;
@@ -49,7 +51,7 @@ class NowPlayingService {
   async poll() {
     const response = await fetch(this.apiUrl, {
       headers: {
-        'User-Agent': 'goodwoodfm-bot/1.0',
+        'User-Agent': userAgent,
       },
     });
 
@@ -65,7 +67,8 @@ class NowPlayingService {
       !this.currentSong ||
       this.currentSong.title !== nextSong.title ||
       this.currentSong.artist !== nextSong.artist ||
-      this.currentSong.album !== nextSong.album;
+      this.currentSong.album !== nextSong.album ||
+      this.currentSong.artwork !== nextSong.artwork;
 
     this.currentSong = nextSong;
 

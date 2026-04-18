@@ -9,6 +9,7 @@ const {
   joinVoiceChannel,
   StreamType,
 } = require('@discordjs/voice');
+const userAgent = require('../utils/userAgent');
 
 class RadioPlayer {
   constructor({ client, config, logger }) {
@@ -173,7 +174,7 @@ class RadioPlayer {
     const response = await fetch(this.config.radioStreamUrl, {
       signal: this.streamAbortController.signal,
       headers: {
-        'User-Agent': 'goodwoodfm-bot/1.0',
+        'User-Agent': userAgent,
       },
     });
 
@@ -189,19 +190,18 @@ class RadioPlayer {
       return;
     }
 
-    this.restartTimer = setTimeout(async () => {
+    this.restartTimer = setTimeout(() => {
       this.restartTimer = null;
       if (this.isStopped) {
         return;
       }
 
-      try {
-        await this.connect();
-        await this.startPlayback();
-      } catch (error) {
-        this.logger.error('Radio restart failed', { error: error.message });
-        this.scheduleRestart();
-      }
+      this.connect()
+        .then(() => this.startPlayback())
+        .catch((error) => {
+          this.logger.error('Radio restart failed', { error: error.message });
+          this.scheduleRestart();
+        });
     }, this.config.streamReconnectDelayMs);
   }
 

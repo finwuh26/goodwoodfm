@@ -20,8 +20,11 @@
   },
   "homepage": "https://github.com/finwuh26/goodwoodfm#readme",
   "dependencies": {
-    "@discordjs/voice": "^0.19.2",
+    "@discordjs/voice": "^0.18.0",
     "discord.js": "^14.26.3",
     "dotenv": "^16.6.1"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }

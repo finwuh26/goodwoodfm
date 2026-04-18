@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 
 const { CooldownManager } = require('../../src/utils/cooldownManager');
 
-test('CooldownManager returns remaining time on repeated calls', async () => {
+test('CooldownManager returns remaining time on repeated calls', () => {
   const manager = new CooldownManager(1);
 
   const first = manager.getRemainingMs('nowplaying', 'user1');
