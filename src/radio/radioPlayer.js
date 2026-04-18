@@ -1,4 +1,10 @@
 const { Readable } = require('node:stream');
+const ffmpegStatic = require('ffmpeg-static');
+
+if (!process.env.FFMPEG_PATH && ffmpegStatic) {
+  process.env.FFMPEG_PATH = ffmpegStatic;
+}
+
 const {
   AudioPlayerStatus,
   NoSubscriberBehavior,
