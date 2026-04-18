@@ -1,0 +1,27 @@
+{
+  "name": "goodwoodfm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node --test",
+    "start": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/finwuh26/goodwoodfm.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/finwuh26/goodwoodfm/issues"
+  },
+  "homepage": "https://github.com/finwuh26/goodwoodfm#readme",
+  "dependencies": {
+    "@discordjs/voice": "^0.19.2",
+    "discord.js": "^14.26.3",
+    "dotenv": "^16.6.1"
+  }
+}
