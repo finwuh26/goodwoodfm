@@ -35,13 +35,12 @@
     <div class="hint" id="hint" hidden>Autoplay was blocked by your browser. Press play to start audio.</div>
     <script>
       const params = new URLSearchParams(window.location.search);
-      const defaultStream = 'https://example.com/stream.mp3';
       const source = document.getElementById('streamSource');
       const player = document.getElementById('player');
       const hint = document.getElementById('hint');
 
       const streamParam = params.get('stream');
-      let stream = defaultStream;
+      let stream = null;
 
       if (streamParam) {
         try {
@@ -50,8 +49,15 @@
             stream = parsed.href;
           }
         } catch {
-          stream = defaultStream;
+          stream = null;
         }
+      }
+
+      if (!stream) {
+        hint.hidden = false;
+        hint.textContent = 'Missing stream URL. Open this page as player.html?stream=https://your-stream.mp3';
+        player.remove();
+        throw new Error('Missing or invalid stream URL');
       }
 
       source.src = stream;

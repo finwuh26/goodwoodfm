@@ -25,7 +25,7 @@ Playback autostarts when the bot comes online. Manual start/stop/reconnect slash
 
 ## Web player
 
-- Open `player.html?stream=<YOUR_MP3_STREAM_URL>` to load a minimal autoplay MP3 player page.
+- Open `player.html?stream=<YOUR_MP3_STREAM_URL>` to load a minimal autoplay MP3 player page (the `stream` parameter is required).
 
 ## Environment variables
 
