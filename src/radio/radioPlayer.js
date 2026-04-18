@@ -1,7 +1,7 @@
 const { Readable } = require('node:stream');
 const ffmpegStatic = require('ffmpeg-static');
 
-if (!process.env.FFMPEG_PATH && ffmpegStatic) {
+if (!process.env.FFMPEG_PATH) {
   process.env.FFMPEG_PATH = ffmpegStatic;
 }
 
