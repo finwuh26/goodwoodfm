@@ -28,3 +28,4 @@ Production-ready Discord radio bot for continuous AzuraCast MP3 streaming.
 - `STREAM_RECONNECT_DELAY_MS` (optional, default `5000`)
 - `API_POLL_INTERVAL_MS` (optional, default `15000`)
 - `STREAM_VOLUME` (optional, default `0.5`)
+- `FFMPEG_PATH` (optional, overrides bundled ffmpeg binary path)
